@@ -7,7 +7,10 @@ var ctx
 
 if (typeof localStorage !== 'undefined') {
     localStorage.setItem('key', 'value');
-    localStorage.setItem('longest time', 0)
+    if(localStorage.getItem('longest time') === null) {
+        localStorage.setItem('longest time', 0)
+    }
+    
   }
 
 function startGame() {
