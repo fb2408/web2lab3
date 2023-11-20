@@ -5,9 +5,13 @@ var myGamePieces, redGamePiece
 
 var ctx
 
+if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('key', 'value');
+  }
 
 function startGame() {
-    if (parseInt(localStorage.getItem("longest time")) === undefined) {
+    
+    if (parseInt(localStorage.getItem("longest time")) === null) {
         localStorage.setItem("longest time", 0)
     }
     myGamePieces = [];
