@@ -7,13 +7,11 @@ var ctx
 
 if (typeof localStorage !== 'undefined') {
     localStorage.setItem('key', 'value');
+    localStorage.setItem('longest time', 0)
   }
 
 function startGame() {
     
-    if (parseInt(localStorage.getItem("longest time")) === null) {
-        localStorage.setItem("longest time", 0)
-    }
     myGamePieces = [];
     redGamePiece = new component(30, 30, "red", (window.innerWidth - 20) / 2, (window.innerHeight - 20) / 2, 135, "redPiece")
     let xAxisStart = true
