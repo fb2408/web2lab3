@@ -7,7 +7,7 @@ var ctx
 
 
 function startGame() {
-    if (parseInt(localStorage.getItem("longest time")) === null) {
+    if (parseInt(localStorage.getItem("longest time")) === undefined) {
         localStorage.setItem("longest time", 0)
     }
     myGamePieces = [];
