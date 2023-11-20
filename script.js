@@ -1,20 +1,22 @@
 const LEN = 20; //num of generated asteroids
-const greyColors = ["#808080", "#818589", "#D3D3D3", "#C0C0C0", "#708090", "#848884"]
+const greyColors = ["#808080", "#818589", "#D3D3D3", "#C0C0C0", "#708090", "#848884"] //array of grey colors
 
+//asteroids
 var myGamePieces, redGamePiece
 
 var ctx
 
+//initializing local storage
 if (typeof localStorage !== 'undefined') {
     localStorage.setItem('key', 'value');
     if(localStorage.getItem('longest time') === null) {
         localStorage.setItem('longest time', 0)
     }
-    
   }
 
 function startGame() {
     
+    //random positions of grey rectangles and center position for red rectangle
     myGamePieces = [];
     redGamePiece = new component(30, 30, "red", (window.innerWidth - 20) / 2, (window.innerHeight - 20) / 2, 135, "redPiece")
     let xAxisStart = true
@@ -39,6 +41,7 @@ function startGame() {
     myGameArea.start();
 }
 
+//define canvas and start, stop functions
 var myGameArea = {
     canvas: document.createElement("canvas"),
     start: function () {
@@ -49,16 +52,14 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 25);
+        this.interval = setInterval(updateGameArea, 20);
     },
     stop: function () {
         clearInterval(this.interval);
-    },
-    clear: function () {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 
+//represents rectangle with his own parameters
 function component(width, height, color, x, y, type) {
     this.type = type;
     this.width = width;
@@ -104,6 +105,7 @@ function component(width, height, color, x, y, type) {
 
 }
 
+//function which update game state every 20 ms or on key listeners
 function updateGameArea() {
     myGameArea.clear();
     myGamePieces.forEach(element => {
@@ -117,13 +119,14 @@ function updateGameArea() {
     var canvas = document.getElementById("myGameCanvas");
     ctx = canvas.getContext("2d");
     ctx.font = "16px Arial";
-    let showedTime = new Date() - currStartTime
-    gameDuration = showedTime
-    let miliSeconds = showedTime % 1000
-    let seconds = Math.floor(showedTime / 1000)
+    let gameDuration = new Date() - currStartTime
+    console.log(gameDuration)
+    let miliSeconds = gameDuration % 1000 + 20
+    let seconds = Math.floor(gameDuration / 1000)
     let minutes = Math.floor(seconds / 60)
-    checkCoalision(gameDuration);
     ctx.fillText("Game time: " + prependZero(minutes, 2) + ":" + prependZero(seconds, 2) + "." + prependZero(miliSeconds, 3), myGameArea.canvas.width - 200, 30);
+    console.log(" i am writed:" + gameDuration)
+    checkCoalision(gameDuration)
     let longestTime = localStorage.getItem("longest time")
     miliSeconds = longestTime % 1000
     seconds = Math.floor(longestTime / 1000)
@@ -131,17 +134,17 @@ function updateGameArea() {
     ctx.fillText("Longest time: " + prependZero(minutes, 2) + ":" + prependZero(seconds, 2) + "." + prependZero(miliSeconds, 3), myGameArea.canvas.width - 200, 60);
 }
 
+//help function which returns random number in interval
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
+//key listeners
 document.addEventListener("keydown", function (e) {
     console.log("pressed");
     if (e.key === "ArrowLeft") { //left
-        console.log("pressed left");
         redGamePiece.x = redGamePiece.x - 3
     } else if (e.key === "ArrowRight") { //right
         redGamePiece.x = redGamePiece.x + 3
@@ -153,16 +156,15 @@ document.addEventListener("keydown", function (e) {
     updateGameArea();
 })
 
+//function which check if rectangle touching exsist
 function checkCoalision(gameDuration) {
+    console.log("started checking coalision")
     myGamePieces.forEach(element => {
 
         if (rectanglesTouching(convertToCustomRectObject(element), convertToCustomRectObject(redGamePiece)) === true) {
             myGameArea.stop();
             checkBestResult(gameDuration)
             //wait 5 seconds
-            if(ctx !== null) {
-                console.log(ctx)
-            }
             ctx.fillText("Your current game result is: " + gameDuration, 200, 200)
             // alert("After 5 seconds game will restart")
             
@@ -175,7 +177,7 @@ function checkCoalision(gameDuration) {
     })
 }
 
-
+//sleep function
 function waitForNextGame(ms){
     var start = new Date().getTime();
     var end = start;
@@ -183,6 +185,7 @@ function waitForNextGame(ms){
       end = new Date().getTime();
    }
  }
+
 
 function rectanglesTouching(a, b) {
 
@@ -192,6 +195,7 @@ function rectanglesTouching(a, b) {
 
 }
 
+//customed rectangles paramateres for easy coalision checking
 function convertToCustomRectObject(element) {
     let topLeftX = element.x - element.width / 2
     let topLeftY = element.y - element.height / 2
@@ -200,6 +204,7 @@ function convertToCustomRectObject(element) {
     return new customedComponent(topLeftX, topLeftY, rightDownX, rightDownY)
 }
 
+//customed object
 function customedComponent(topLeftX, topLeftY, rightDownX, rightDownY) {
     this.x1 = topLeftX
     this.y1 = topLeftY
@@ -210,12 +215,15 @@ function customedComponent(topLeftX, topLeftY, rightDownX, rightDownY) {
 
 
 
+
+
 // Prepend zeros to the digits in stopwatch
 function prependZero(time, length) {
     time = new String(time);    // stringify time
     return new Array(Math.max(length - time.length + 1, 0)).join("0") + time;
 }
 
+//function which check is current result better than previus best
 function checkBestResult(currDuration) {
     console.log("Current game duration is: " + currDuration)
     console.log("Longest game duration:" + localStorage.getItem("longest time"))
